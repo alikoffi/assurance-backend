@@ -61,8 +61,10 @@ class SouscriptionVisibilityTest {
 				.findFirst()
 				.orElseThrow()
 				.getId();
+		Long simulationAmazone2Id = simulationService.creer(simulationRequest()).getId();
 
 		connecter("amazone1");
+		Long simulationAmazone1Id = simulationService.creer(simulationRequest()).getId();
 		List<Long> idsAmazone1 = souscriptionService.lister().stream()
 				.map(SouscriptionResponseDto::getId)
 				.toList();
@@ -75,6 +77,12 @@ class SouscriptionVisibilityTest {
 		assertTrue(nomsAssuresAmazone1.contains("Kouame"));
 		assertFalse(nomsAssuresAmazone1.contains("Traore"));
 		assertThrows(AssuranceException.class, () -> assureService.rechercher(assureAmazone2Id));
+		List<Long> idsSimulationsAmazone1 = simulationService.lister().stream()
+				.map(simulation -> simulation.getId())
+				.toList();
+		assertTrue(idsSimulationsAmazone1.contains(simulationAmazone1Id));
+		assertFalse(idsSimulationsAmazone1.contains(simulationAmazone2Id));
+		assertThrows(AssuranceException.class, () -> simulationService.rechercher(simulationAmazone2Id));
 
 		connecter("admin");
 		List<Long> idsAdmin = souscriptionService.lister().stream()
@@ -89,6 +97,11 @@ class SouscriptionVisibilityTest {
 		assertTrue(nomsAssuresAdmin.contains("Kouame"));
 		assertTrue(nomsAssuresAdmin.contains("Traore"));
 		assertDoesNotThrow(() -> assureService.rechercher(assureAmazone2Id));
+		List<Long> idsSimulationsAdmin = simulationService.lister().stream()
+				.map(simulation -> simulation.getId())
+				.toList();
+		assertTrue(idsSimulationsAdmin.contains(simulationAmazone1Id));
+		assertTrue(idsSimulationsAdmin.contains(simulationAmazone2Id));
 	}
 
 	private SouscriptionResponseDto souscrire(String immatriculation, String prenom, String nom) {

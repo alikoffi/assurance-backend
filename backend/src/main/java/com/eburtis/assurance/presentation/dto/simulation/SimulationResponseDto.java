@@ -17,13 +17,18 @@ public class SimulationResponseDto {
 	private BigDecimal valeurVenale;
 	private BigDecimal price;
 	private List<GarantiePrimeDto> garanties;
+	private Long utilisateurId;
+	private String utilisateurNom;
+	private boolean souscrite;
+	private boolean modifiable;
 
 	public SimulationResponseDto() {
 	}
 
 	public SimulationResponseDto(Long id, String quoteReference, LocalDate endDate, String produitCode, String produitNom,
 			String categorieCode, LocalDate datePremiereMiseEnCirculation, Integer puissanceFiscale,
-			BigDecimal valeurNeuve, BigDecimal valeurVenale, BigDecimal price, List<GarantiePrimeDto> garanties) {
+			BigDecimal valeurNeuve, BigDecimal valeurVenale, BigDecimal price, List<GarantiePrimeDto> garanties,
+			Long utilisateurId, String utilisateurNom, boolean souscrite, boolean modifiable) {
 		this.id = id;
 		this.quoteReference = quoteReference;
 		this.endDate = endDate;
@@ -36,6 +41,10 @@ public class SimulationResponseDto {
 		this.valeurVenale = valeurVenale;
 		this.price = price;
 		this.garanties = garanties;
+		this.utilisateurId = utilisateurId;
+		this.utilisateurNom = utilisateurNom;
+		this.souscrite = souscrite;
+		this.modifiable = modifiable;
 	}
 
 	public Long getId() {
@@ -84,5 +93,21 @@ public class SimulationResponseDto {
 
 	public List<GarantiePrimeDto> getGaranties() {
 		return garanties;
+	}
+
+	public Long getUtilisateurId() {
+		return utilisateurId;
+	}
+
+	public String getUtilisateurNom() {
+		return utilisateurNom;
+	}
+
+	public boolean isSouscrite() {
+		return souscrite;
+	}
+
+	public boolean isModifiable() {
+		return modifiable;
 	}
 }

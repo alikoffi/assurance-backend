@@ -13,12 +13,14 @@ public class SouscriptionResponseDto {
 	private StatutSouscription statut;
 	private LocalDateTime dateSouscription;
 	private BigDecimal price;
+	private Long utilisateurId;
+	private String utilisateurNom;
 
 	public SouscriptionResponseDto() {
 	}
 
 	public SouscriptionResponseDto(Long id, String subscriptionReference, String quoteReference, String numeroAttestation,
-			StatutSouscription statut, LocalDateTime dateSouscription, BigDecimal price) {
+			StatutSouscription statut, LocalDateTime dateSouscription, BigDecimal price, Long utilisateurId, String utilisateurNom) {
 		this.id = id;
 		this.subscriptionReference = subscriptionReference;
 		this.quoteReference = quoteReference;
@@ -26,6 +28,8 @@ public class SouscriptionResponseDto {
 		this.statut = statut;
 		this.dateSouscription = dateSouscription;
 		this.price = price;
+		this.utilisateurId = utilisateurId;
+		this.utilisateurNom = utilisateurNom;
 	}
 
 	public Long getId() {
@@ -54,5 +58,13 @@ public class SouscriptionResponseDto {
 
 	public BigDecimal getPrice() {
 		return price;
+	}
+
+	public Long getUtilisateurId() {
+		return utilisateurId;
+	}
+
+	public String getUtilisateurNom() {
+		return utilisateurNom;
 	}
 }

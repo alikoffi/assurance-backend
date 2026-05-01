@@ -83,7 +83,7 @@ public class UtilisateurService {
 
 		if (SecurityService.comparerPassword(request.getNouveauMotDePasse().trim(), utilisateur.getPassword())) {
 			throw AssuranceException.badRequest("MOT_DE_PASSE_IDENTIQUE",
-					"Le nouveau mot de passe doit etre different de l'ancien.");
+					"Le nouveau mot de passe doit être différent de l'ancien.");
 		}
 
 		utilisateur.setPassword(SecurityService.crypterPassword(request.getNouveauMotDePasse().trim()));
@@ -99,7 +99,7 @@ public class UtilisateurService {
 	private void verifierAdmin() {
 		Utilisateur utilisateur = utilisateurConnecteObligatoire();
 		if (utilisateur.getRole() != Role.ADMIN) {
-			throw AssuranceException.forbidden("ACCES_REFUSE", "Seul un administrateur peut gerer les utilisateurs.");
+			throw AssuranceException.forbidden("ACCES_REFUSE", "Seul un administrateur peut gérer les utilisateurs.");
 		}
 	}
 
@@ -107,14 +107,14 @@ public class UtilisateurService {
 		String username = SecurityUtils.lireLoginUtilisateurConnecte();
 		return utilisateurRepository.rechercherParUsername(username)
 				.orElseThrow(() -> AssuranceException.badRequest("UTILISATEUR_CONNECTE_INTROUVABLE",
-						"Impossible de retrouver l'utilisateur connecte."));
+						"Impossible de retrouver l'utilisateur connecté."));
 	}
 
 	private void verifierUsernameDisponible(String username, Long idUtilisateurModifie) {
 		utilisateurRepository.rechercherParUsername(username)
 				.filter(utilisateur -> idUtilisateurModifie == null || !utilisateur.getId().equals(idUtilisateurModifie))
 				.ifPresent(utilisateur -> {
-					throw AssuranceException.badRequest("USERNAME_DEJA_UTILISE", "Ce nom d'utilisateur est deja utilise.");
+					throw AssuranceException.badRequest("USERNAME_DEJA_UTILISE", "Ce nom d'utilisateur est déjà utilisé.");
 				});
 	}
 
@@ -129,30 +129,30 @@ public class UtilisateurService {
 
 	private void validerChangementMotDePasse(ChangementMotDePasseDto request) {
 		if (request == null) {
-			throw AssuranceException.badRequest("REQUETE_INVALIDE", "La requete de changement de mot de passe est obligatoire.");
+			throw AssuranceException.badRequest("REQUETE_INVALIDE", "La requête de changement de mot de passe est obligatoire.");
 		}
 		verifierTexte(request.getAncienMotDePasse(), "L'ancien mot de passe est obligatoire.");
 		verifierTexte(request.getNouveauMotDePasse(), "Le nouveau mot de passe est obligatoire.");
 		verifierTexte(request.getConfirmationMotDePasse(), "La confirmation du mot de passe est obligatoire.");
 		if (!request.getNouveauMotDePasse().trim().equals(request.getConfirmationMotDePasse().trim())) {
 			throw AssuranceException.badRequest("MOTS_DE_PASSE_DIFFERENTS",
-					"Le nouveau mot de passe et sa confirmation doivent etre identiques.");
+					"Le nouveau mot de passe et sa confirmation doivent être identiques.");
 		}
 		if (request.getNouveauMotDePasse().trim().length() < 6) {
 			throw AssuranceException.badRequest("MOT_DE_PASSE_TROP_COURT",
-					"Le nouveau mot de passe doit contenir au moins 6 caracteres.");
+					"Le nouveau mot de passe doit contenir au moins 6 caractères.");
 		}
 	}
 
 	private void validerCommun(UtilisateurRequestDto request) {
 		if (request == null) {
-			throw AssuranceException.badRequest("REQUETE_INVALIDE", "La requete utilisateur est obligatoire.");
+			throw AssuranceException.badRequest("REQUETE_INVALIDE", "La requête utilisateur est obligatoire.");
 		}
 		verifierTexte(request.getUsername(), "Le nom d'utilisateur est obligatoire.");
 		verifierTexte(request.getNom(), "Le nom est obligatoire.");
-		verifierTexte(request.getPrenoms(), "Les prenoms sont obligatoires.");
+		verifierTexte(request.getPrenoms(), "Les prénoms sont obligatoires.");
 		if (request.getRole() == null) {
-			throw AssuranceException.badRequest("CHAMP_OBLIGATOIRE", "Le role est obligatoire.");
+			throw AssuranceException.badRequest("CHAMP_OBLIGATOIRE", "Le rôle est obligatoire.");
 		}
 		if (request.getStatut() == null) {
 			throw AssuranceException.badRequest("CHAMP_OBLIGATOIRE", "Le statut est obligatoire.");

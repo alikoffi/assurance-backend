@@ -54,7 +54,7 @@ public class JwtTokenUtils implements Serializable {
     }
 
     /**
-     * Retourne les les toutes informations du Token JWT.
+     * Retourne toutes les informations du token JWT.
      *
      * @param token Le Token JWT.
      * @return le nom de l'utilisateur.
@@ -64,10 +64,10 @@ public class JwtTokenUtils implements Serializable {
     }
 
     /**
-     * Vérifie si le Token JWT a expiré
+     * Vérifie si le token JWT a expiré.
      *
      * @param token Le Token JWT.
-     * @return true si le token a expiré
+     * @return true si le token a expiré.
      */
     public boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
@@ -75,7 +75,7 @@ public class JwtTokenUtils implements Serializable {
     }
 
     /**
-     * Verifie que le token est valid
+     * Vérifie que le token est valide.
      *
      * @param token le token
      * @param userDetails les informations de l'utilisateur
@@ -106,7 +106,7 @@ public class JwtTokenUtils implements Serializable {
 
 
     /**
-     * Permet de comptacter les attituts de l'utilisateur pour la génération du Token JWT.
+     * Permet de compacter les attributs de l'utilisateur pour la génération du token JWT.
      *
      * @param claims Les attributs.
      * @param subject le username de l'utilisateur.

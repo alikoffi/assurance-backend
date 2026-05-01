@@ -28,8 +28,14 @@ public class PrimeCalculatorService {
 			Integer puissanceFiscale, BigDecimal valeurNeuve, BigDecimal valeurVenale) {
 		List<GarantiePrimeDto> garanties = produitAssurance.getGaranties().stream()
 				.sorted(Comparator.comparing(Garantie::getCode))
+				.filter(garantie -> estEligibleSelonAge(garantie, datePremiereMiseEnCirculation))
 				.map(garantie -> calculerGarantie(garantie, datePremiereMiseEnCirculation, puissanceFiscale, valeurNeuve, valeurVenale))
 				.toList();
+
+		if (garanties.isEmpty()) {
+			throw AssuranceException.badRequest("AUCUNE_GARANTIE_ELIGIBLE",
+					"Aucune garantie du produit n'est éligible pour ce véhicule.");
+		}
 
 		BigDecimal price = garanties.stream()
 				.map(GarantiePrimeDto::getMontant)
@@ -40,15 +46,13 @@ public class PrimeCalculatorService {
 
 	private GarantiePrimeDto calculerGarantie(Garantie garantie, LocalDate datePremiereMiseEnCirculation,
 			Integer puissanceFiscale, BigDecimal valeurNeuve, BigDecimal valeurVenale) {
-		verifierAgeVehicule(garantie, datePremiereMiseEnCirculation);
-
 		BigDecimal montant = switch (garantie.getCode()) {
 			case "RC" -> calculerResponsabiliteCivile(puissanceFiscale);
 			case "DOMMAGES", "TIERCE_COLLISION" -> arrondir(valeurNeuve.multiply(garantie.getTaux()));
 			case "TIERCE_PLAFONNEE" -> calculerTiercePlafonnee(garantie, valeurVenale);
 			case "VOL", "INCENDIE" -> arrondir(valeurVenale.multiply(garantie.getTaux()));
 			default -> throw AssuranceException.internal("GARANTIE_NON_PARAMETREE",
-					"La garantie " + garantie.getCode() + " n'est pas parametree pour le calcul.");
+					"La garantie " + garantie.getCode() + " n'est pas paramétrée pour le calcul.");
 		};
 
 		return new GarantiePrimeDto(garantie.getCode(), garantie.getLibelle(), montant);
@@ -58,27 +62,23 @@ public class PrimeCalculatorService {
 		return tarifResponsabiliteCivileRepository.rechercherParPuissanceFiscale(puissanceFiscale)
 				.map(tarif -> arrondir(tarif.getPrime()))
 				.orElseThrow(() -> AssuranceException.badRequest("TARIF_RC_INTROUVABLE",
-						"Aucun tarif RC trouve pour la puissance fiscale " + puissanceFiscale + "."));
+						"Aucun tarif RC trouvé pour la puissance fiscale " + puissanceFiscale + "."));
 	}
 
 	private BigDecimal calculerTiercePlafonnee(Garantie garantie, BigDecimal valeurVenale) {
-		// Valeur assuree = 50% de la valeur venale, puis prime = 4,20% de cette valeur.
+		// Valeur assurée = 50% de la valeur vénale, puis prime = 4,20% de cette valeur.
 		BigDecimal valeurAssuree = valeurVenale.multiply(VALEUR_ASSUREE_TIERCE_PLAFONNEE);
 		BigDecimal prime = arrondir(valeurAssuree.multiply(garantie.getTaux()));
 		return prime.max(garantie.getPrimeMinimum());
 	}
 
-	private void verifierAgeVehicule(Garantie garantie, LocalDate datePremiereMiseEnCirculation) {
+	private boolean estEligibleSelonAge(Garantie garantie, LocalDate datePremiereMiseEnCirculation) {
 		if (garantie.getAgeMaximum() == null) {
-			return;
+			return true;
 		}
 
 		int ageVehicule = Period.between(datePremiereMiseEnCirculation, LocalDate.now()).getYears();
-		if (ageVehicule > garantie.getAgeMaximum()) {
-			throw AssuranceException.badRequest("GARANTIE_NON_ELIGIBLE",
-					"La garantie " + garantie.getLibelle() + " est reservee aux vehicules de 0 a "
-							+ garantie.getAgeMaximum() + " ans.");
-		}
+		return ageVehicule <= garantie.getAgeMaximum();
 	}
 
 	private BigDecimal arrondir(BigDecimal montant) {

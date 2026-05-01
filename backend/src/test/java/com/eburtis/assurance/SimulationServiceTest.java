@@ -10,8 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest
 @Transactional
@@ -39,5 +41,26 @@ class SimulationServiceTest {
 		// PAPILLON = RC 45 181 + DOMMAGES 2,60% valeur neuve + VOL 0,14% valeur venale.
 		assertEquals(new BigDecimal("313581"), response.getPrice());
 		assertEquals(3, response.getGaranties().size());
+	}
+
+	@Test
+	void creerSimulationIgnoreLesGarantiesNonEligiblesParAge() {
+		SimulationRequestDto request = new SimulationRequestDto();
+		request.setProduitCode("TOUTOURISQUOU");
+		request.setCategorieCode("201");
+		request.setDatePremiereMiseEnCirculation(LocalDate.now().minusYears(9));
+		request.setPuissanceFiscale(3);
+		request.setValeurNeuve(new BigDecimal("10000000"));
+		request.setValeurVenale(new BigDecimal("6000000"));
+
+		SimulationResponseDto response = simulationService.creer(request);
+
+		List<String> garanties = response.getGaranties().stream()
+				.map(garantie -> garantie.getCode())
+				.toList();
+		assertEquals(new BigDecimal("188581"), response.getPrice());
+		assertEquals(4, garanties.size());
+		assertFalse(garanties.contains("DOMMAGES"));
+		assertFalse(garanties.contains("TIERCE_COLLISION"));
 	}
 }

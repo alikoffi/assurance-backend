@@ -48,9 +48,6 @@ repositories {
 }
 
 dependencies {
-	implementation 'com.opencsv:opencsv:5.8'
-	implementation 'org.apache.poi:poi:5.2.5'
-	implementation 'org.apache.poi:poi-ooxml:5.2.5'
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
@@ -61,18 +58,10 @@ dependencies {
 	implementation "org.flywaydb:flyway-core:$flywaydbVersion"
 
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
-	implementation 'org.javatuples:javatuples:1.2'
-
-	implementation group: 'javax.validation', name: 'validation-api', version: '1.0.0.GA'
-
 	implementation 'org.apache.commons:commons-collections4:4.4'
-
 	implementation 'org.apache.commons:commons-lang3:3.18.0'
-
-// iText PDF pour la génération de rapports
 	implementation 'com.itextpdf:itext7-core:7.2.5'
 
-	// JWT pour l'authentification
 	implementation "io.jsonwebtoken:jjwt-api:$jjwtVersion"
 	implementation "io.jsonwebtoken:jjwt-impl:$jjwtVersion"
 	implementation "io.jsonwebtoken:jjwt-jackson:$jjwtVersion"
@@ -81,7 +70,6 @@ dependencies {
 
 	runtimeOnly "org.postgresql:postgresql:$postgresqlVersion"
 
-	// Developpement
 	developmentOnly "org.springframework.boot:spring-boot-devtools:$springBootVersion"
 
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
@@ -90,15 +78,6 @@ dependencies {
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.11.0'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
-//	testImplementation 'org.mockito:junit-jupiter-api:5.10.2'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'com.openhtmltopdf:openhtmltopdf-pdfbox:1.0.10'
-    implementation 'com.openhtmltopdf:openhtmltopdf-slf4j:1.0.10'
-    implementation 'org.jfree:jfreechart:1.5.4'
-
-	implementation 'com.microsoft.playwright:playwright:1.47.0' // dernière version
-
-
 }
 
 sourceSets {
@@ -192,14 +171,12 @@ jacocoTestReport {
 
 sonar {
 	properties {
-		property 'sonar.projectKey', 'airp-backend'
-		property 'sonar.login', 'sqp_2c0e36691de1ed469ef82f8a638b064d357361b8'
-		property 'sonar.host.url', 'http://51.68.188.201:9000/'
+		property 'sonar.projectKey', 'assurance-backend'
 		property 'sonar.core.codeCoveragePlugin', 'jacoco'
 		property 'sonar.coverage.jacoco.xmlReportPaths', "${buildDir}/reports/jacoco.xml"
 	}
 }
 
 bootWar {
-	archiveFileName = 'ablink.war'
+	archiveFileName = 'assurance-backend.war'
 }

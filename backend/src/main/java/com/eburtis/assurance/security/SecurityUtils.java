@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class SecurityUtils {
     /**
-     * Login par défaut lorsqu'aucun utilisateur n'est connecté
+     * Login par défaut lorsqu'aucun utilisateur n'est connecté.
      */
     public static final String DEFAULT_LOGIN = "ANONYMOUS";
 
@@ -14,7 +14,7 @@ public class SecurityUtils {
     }
 
     /**
-     * @return le login de l'utilisateur connecté
+     * @return le login de l'utilisateur connecté.
      */
     public static String lireLoginUtilisateurConnecte() {
         SecurityContext context = SecurityContextHolder.getContext();

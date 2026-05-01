@@ -6,6 +6,7 @@ import com.eburtis.assurance.service.SimulationService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,5 +35,10 @@ public class SimulationController {
 	@GetMapping("/{id}")
 	public SimulationResponseDto rechercher(@PathVariable Long id) {
 		return simulationService.rechercher(id);
+	}
+
+	@PutMapping("/{id}")
+	public SimulationResponseDto modifier(@PathVariable Long id, @RequestBody SimulationRequestDto request) {
+		return simulationService.modifier(id, request);
 	}
 }

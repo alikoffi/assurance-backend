@@ -1,93 +1,243 @@
-# abcash-backend
+# Action'Elles Assurance - Backend
 
+Backend Spring Boot de l'application Action'Elles Assurance, realisee pour digitaliser la simulation et la souscription de produits d'assurance automobile NSIAGO'ASSUR.
 
+## Stack
 
-## Getting started
+- Java 17
+- Spring Boot 3.2
+- Spring Security avec JWT
+- Spring Data JPA
+- PostgreSQL
+- Flyway
+- iText 7 pour les attestations PDF
+- Swagger/OpenAPI via Springdoc
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## Fonctionnalites
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+- Authentification JWT.
+- Gestion des roles `ADMIN` et `AMAZONE`.
+- Simulation de prime automobile.
+- Consultation et modification des simulations non souscrites.
+- Souscription a partir d'un devis valide.
+- Generation d'une attestation PDF avec logo et QR code.
+- Gestion des utilisateurs par l'administrateur.
+- Visibilite metier : une amazone voit uniquement ses souscriptions et ses assures, l'admin voit tout.
 
-## Add your files
+## Prerequis
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+- JDK 17
+- PostgreSQL
+- Gradle wrapper fourni dans le projet
 
+## Base De Donnees
+
+Creer une base PostgreSQL locale :
+
+```sql
+CREATE DATABASE assurance;
+CREATE USER assurance WITH PASSWORD 'assurance';
+GRANT ALL PRIVILEGES ON DATABASE assurance TO assurance;
 ```
-cd existing_repo
-git remote add origin http://51.68.188.201:8000/onea/abcash/abcash-backend.git
-git branch -M main
-git push -uf origin main
+
+Configuration par defaut dans `src/main/resources/application.properties` :
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/assurance
+spring.datasource.username=assurance
+spring.datasource.password=assurance
+server.port=8075
 ```
 
-## Integrate with your tools
+Flyway cree automatiquement le schema et insere les donnees de reference au demarrage.
 
-- [ ] [Set up project integrations](http://51.68.188.201:8000/onea/abcash/abcash-backend/-/settings/integrations)
+## Lancement
 
-## Collaborate with your team
+Depuis le dossier `backend` :
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+```bash
+./gradlew bootRun
+```
 
-## Test and Deploy
+Sur Windows :
 
-Use the built-in continuous integration in GitLab.
+```powershell
+.\gradlew.bat bootRun
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+L'API est disponible sur :
 
-***
+```text
+http://localhost:8075/api/v1
+```
 
-# Editing this README
+Swagger est disponible sur :
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+```text
+http://localhost:8075/swagger-ui.html
+```
 
-## Suggestions for a good README
+## Comptes De Test
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+Les mots de passe initiaux des comptes inseres par Flyway sont identiques.
 
-## Name
-Choose a self-explaining name for your project.
+| Login | Role |
+| --- | --- |
+| admin | ADMIN |
+| abadou | ADMIN |
+| ibamba | ADMIN |
+| daka | ADMIN |
+| akouadio | ADMIN |
+| amazone1 | AMAZONE |
+| amazone2 | AMAZONE |
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Mot de passe initial :
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+```text
+eburtis2020
+```
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## Endpoints Principaux
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### Authentification
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+```http
+POST /api/v1/securite/auth
+```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+Exemple :
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+```json
+{
+  "username": "admin",
+  "password": "eburtis2020"
+}
+```
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+### Simulations
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+```http
+GET  /api/v1/simulations
+POST /api/v1/simulations
+GET  /api/v1/simulations/{id}
+PUT  /api/v1/simulations/{id}
+```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+Exemple de creation :
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+```json
+{
+  "produitCode": "PAPILLON",
+  "categorieCode": "201",
+  "datePremiereMiseEnCirculation": "2024-01-10",
+  "puissanceFiscale": 3,
+  "valeurNeuve": 10000000,
+  "valeurVenale": 6000000
+}
+```
 
-## License
-For open source projects, say how it is licensed.
+La reponse contient notamment :
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+- `quoteReference` au format `QT` + 12 caracteres.
+- `endDate` a 2 semaines.
+- `price`.
+- le detail des garanties retenues.
+
+### Souscriptions
+
+```http
+POST /api/v1/subscriptions
+GET  /api/v1/subscriptions
+GET  /api/v1/subscriptions/{id}
+GET  /api/v1/subscriptions/status/{id}
+GET  /api/v1/subscriptions/{id}/attestation
+```
+
+### Assures
+
+```http
+GET /api/v1/assures
+GET /api/v1/assures/{id}
+```
+
+### Utilisateurs
+
+```http
+GET /api/v1/utilisateurs
+GET /api/v1/utilisateurs/{id}
+POST /api/v1/utilisateurs
+PUT /api/v1/utilisateurs/{id}
+PUT /api/v1/utilisateurs/me/mot-de-passe
+```
+
+## Regles Metier
+
+### Produits
+
+| Produit | Garanties | Categories |
+| --- | --- | --- |
+| Papillon | RC, DOMMAGES, VOL | 201 |
+| Douby | RC, DOMMAGES, TIERCE COLLISION | 202 |
+| Douyou | RC, DOMMAGES, TIERCE COLLISION, INCENDIE | 201, 202 |
+| Toutourisquou | Toutes garanties | 201 |
+
+### Garanties
+
+- RC : tarif selon la puissance fiscale.
+- DOMMAGES : 2,60% de la valeur neuve, vehicules de 0 a 5 ans.
+- TIERCE COLLISION : 1,65% de la valeur neuve, vehicules de 0 a 8 ans.
+- TIERCE PLAFONNEE : 4,20% de 50% de la valeur venale, minimum 100 000 F CFA, vehicules de 0 a 10 ans.
+- VOL : 0,14% de la valeur venale.
+- INCENDIE : 0,15% de la valeur venale.
+
+Les garanties non eligibles selon l'age du vehicule sont ignorees. Le prix final correspond a la somme des garanties retenues.
+
+## Attestation PDF
+
+L'attestation contient :
+
+- le numero unique d'attestation ;
+- les informations de souscription ;
+- les informations de l'assure ;
+- les informations du vehicule ;
+- le produit souscrit ;
+- la prime ;
+- un QR code contenant les informations principales de l'attestation.
+
+Le logo est charge depuis :
+
+```properties
+attestation.logo.path=classpath:static/images/logo-action-elles.png
+```
+
+## Tests
+
+```bash
+./gradlew test
+```
+
+Sur Windows :
+
+```powershell
+.\gradlew.bat test
+```
+
+Les tests couvrent notamment :
+
+- le calcul de simulation ;
+- l'exclusion des garanties non eligibles par age ;
+- la visibilite des souscriptions et assures par role ;
+- la gestion des utilisateurs ;
+- la generation d'attestation PDF.
+
+## Build
+
+```bash
+./gradlew bootWar
+```
+
+Artefact genere :
+
+```text
+build/libs/assurance-backend.war
+```

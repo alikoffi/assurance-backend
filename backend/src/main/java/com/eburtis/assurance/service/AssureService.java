@@ -39,10 +39,10 @@ public class AssureService {
 	public AssureResponseDto rechercher(Long id) {
 		Utilisateur utilisateur = utilisateurConnecteObligatoire();
 		Assure assure = assureRepository.findById(id)
-				.orElseThrow(() -> AssuranceException.notFound("ASSURE_INTROUVABLE", "Assure introuvable."));
+				.orElseThrow(() -> AssuranceException.notFound("ASSURE_INTROUVABLE", "Assuré introuvable."));
 
 		if (utilisateur.getRole() != Role.ADMIN && !assureRepository.existePourUtilisateur(id, utilisateur.getId())) {
-			throw AssuranceException.notFound("ASSURE_INTROUVABLE", "Assure introuvable.");
+			throw AssuranceException.notFound("ASSURE_INTROUVABLE", "Assuré introuvable.");
 		}
 
 		return toDto(assure);
@@ -52,7 +52,7 @@ public class AssureService {
 		String username = SecurityUtils.lireLoginUtilisateurConnecte();
 		return utilisateurRepository.rechercherParUsername(username)
 				.orElseThrow(() -> AssuranceException.badRequest("UTILISATEUR_CONNECTE_INTROUVABLE",
-						"Impossible de retrouver l'utilisateur connecte."));
+						"Impossible de retrouver l'utilisateur connecté."));
 	}
 
 	private AssureResponseDto toDto(Assure assure) {

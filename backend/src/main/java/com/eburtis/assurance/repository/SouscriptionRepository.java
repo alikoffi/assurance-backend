@@ -12,4 +12,6 @@ public interface SouscriptionRepository extends JpaRepository<Souscription, Long
 	Optional<Souscription> findBySubscriptionReference(String subscriptionReference);
 
 	List<Souscription> findByUtilisateurId(Long utilisateurId);
+
+	boolean existsBySimulationId(Long simulationId);
 }

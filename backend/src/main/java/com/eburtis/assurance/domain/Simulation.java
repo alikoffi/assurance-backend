@@ -35,6 +35,10 @@ public class Simulation extends AbstractEntity {
 	@JoinColumn(name = "categorie_vehicule_id")
 	private CategorieVehicule categorieVehicule;
 
+	@ManyToOne
+	@JoinColumn(name = "utilisateur_id")
+	private Utilisateur utilisateur;
+
 	private LocalDate datePremiereMiseEnCirculation;
 	private Integer puissanceFiscale;
 	private BigDecimal valeurNeuve;
@@ -58,6 +62,22 @@ public class Simulation extends AbstractEntity {
 		this.price = price;
 	}
 
+	public void mettreAJour(ProduitAssurance produitAssurance, CategorieVehicule categorieVehicule,
+			LocalDate datePremiereMiseEnCirculation, Integer puissanceFiscale, BigDecimal valeurNeuve,
+			BigDecimal valeurVenale, BigDecimal price) {
+		this.produitAssurance = produitAssurance;
+		this.categorieVehicule = categorieVehicule;
+		this.datePremiereMiseEnCirculation = datePremiereMiseEnCirculation;
+		this.puissanceFiscale = puissanceFiscale;
+		this.valeurNeuve = valeurNeuve;
+		this.valeurVenale = valeurVenale;
+		this.price = price;
+	}
+
+	public void setUtilisateur(Utilisateur utilisateur) {
+		this.utilisateur = utilisateur;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -76,6 +96,10 @@ public class Simulation extends AbstractEntity {
 
 	public CategorieVehicule getCategorieVehicule() {
 		return categorieVehicule;
+	}
+
+	public Utilisateur getUtilisateur() {
+		return utilisateur;
 	}
 
 	public LocalDate getDatePremiereMiseEnCirculation() {

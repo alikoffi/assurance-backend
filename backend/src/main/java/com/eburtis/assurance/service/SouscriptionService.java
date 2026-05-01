@@ -121,58 +121,58 @@ public class SouscriptionService {
 			return simulation.getCategorieVehicule();
 		}
 		return categorieVehiculeRepository.findByCode(vehicule.getCategorieCode().trim())
-				.orElseThrow(() -> AssuranceException.notFound("CATEGORIE_INTROUVABLE", "Categorie de vehicule introuvable."));
+				.orElseThrow(() -> AssuranceException.notFound("CATEGORIE_INTROUVABLE", "Catégorie de véhicule introuvable."));
 	}
 
 	private void validerCoherenceVehicule(VehiculeDto vehicule, Simulation simulation, CategorieVehicule categorie) {
 		if (!categorie.getId().equals(simulation.getCategorieVehicule().getId())) {
 			throw AssuranceException.badRequest("VEHICULE_INCOHERENT",
-					"La categorie du vehicule doit correspondre a la categorie du devis.");
+					"La catégorie du véhicule doit correspondre à la catégorie du devis.");
 		}
 		verifierMemeValeur(vehicule.getDatePremiereMiseEnCirculation(), simulation.getDatePremiereMiseEnCirculation(),
-				"La date de premiere mise en circulation doit correspondre au devis.");
+				"La date de première mise en circulation doit correspondre au devis.");
 		verifierMemeValeur(vehicule.getPuissanceFiscale(), simulation.getPuissanceFiscale(),
 				"La puissance fiscale doit correspondre au devis.");
 		verifierMemeMontant(vehicule.getValeurNeuve(), simulation.getValeurNeuve(),
 				"La valeur neuve doit correspondre au devis.");
 		verifierMemeMontant(vehicule.getValeurVenale(), simulation.getValeurVenale(),
-				"La valeur venale doit correspondre au devis.");
+				"La valeur vénale doit correspondre au devis.");
 	}
 
 	private void validerSouscriptionRequest(SouscriptionRequestDto request) {
 		if (request == null) {
-			throw AssuranceException.badRequest("REQUETE_INVALIDE", "La requete de souscription est obligatoire.");
+			throw AssuranceException.badRequest("REQUETE_INVALIDE", "La requête de souscription est obligatoire.");
 		}
 		if (request.getSimulationId() == null) {
 			throw AssuranceException.badRequest("CHAMP_OBLIGATOIRE", "La simulation est obligatoire.");
 		}
 		if (request.getAssure() == null) {
-			throw AssuranceException.badRequest("CHAMP_OBLIGATOIRE", "Les informations de l'assure sont obligatoires.");
+			throw AssuranceException.badRequest("CHAMP_OBLIGATOIRE", "Les informations de l'assuré sont obligatoires.");
 		}
 		if (request.getVehicule() == null) {
-			throw AssuranceException.badRequest("CHAMP_OBLIGATOIRE", "Les informations du vehicule sont obligatoires.");
+			throw AssuranceException.badRequest("CHAMP_OBLIGATOIRE", "Les informations du véhicule sont obligatoires.");
 		}
 
 		AssureDto assure = request.getAssure();
-		verifierTexte(assure.getAdresse(), "L'adresse de l'assure est obligatoire.");
-		verifierTexte(assure.getTelephone(), "Le telephone de l'assure est obligatoire.");
-		verifierTexte(assure.getNom(), "Le nom de l'assure est obligatoire.");
-		verifierTexte(assure.getPrenom(), "Le prenom de l'assure est obligatoire.");
-		verifierTexte(assure.getNumeroCarteIdentite(), "Le numero de carte d'identite est obligatoire.");
-		verifierTexte(assure.getVille(), "La ville de l'assure est obligatoire.");
+		verifierTexte(assure.getAdresse(), "L'adresse de l'assuré est obligatoire.");
+		verifierTexte(assure.getTelephone(), "Le téléphone de l'assuré est obligatoire.");
+		verifierTexte(assure.getNom(), "Le nom de l'assuré est obligatoire.");
+		verifierTexte(assure.getPrenom(), "Le prénom de l'assuré est obligatoire.");
+		verifierTexte(assure.getNumeroCarteIdentite(), "Le numéro de carte d'identité est obligatoire.");
+		verifierTexte(assure.getVille(), "La ville de l'assuré est obligatoire.");
 
 		VehiculeDto vehicule = request.getVehicule();
-		verifierTexte(vehicule.getNumeroImmatriculation(), "Le numero d'immatriculation est obligatoire.");
-		verifierTexte(vehicule.getCouleur(), "La couleur du vehicule est obligatoire.");
-		verifierEntierPositif(vehicule.getNombreSieges(), "Le nombre de sieges doit etre superieur a 0.");
-		verifierEntierPositif(vehicule.getNombrePortes(), "Le nombre de portes doit etre superieur a 0.");
+		verifierTexte(vehicule.getNumeroImmatriculation(), "Le numéro d'immatriculation est obligatoire.");
+		verifierTexte(vehicule.getCouleur(), "La couleur du véhicule est obligatoire.");
+		verifierEntierPositif(vehicule.getNombreSieges(), "Le nombre de sièges doit être supérieur à 0.");
+		verifierEntierPositif(vehicule.getNombrePortes(), "Le nombre de portes doit être supérieur à 0.");
 	}
 
 	private Utilisateur utilisateurConnecteObligatoire() {
 		String username = SecurityUtils.lireLoginUtilisateurConnecte();
 		return utilisateurRepository.rechercherParUsername(username)
 				.orElseThrow(() -> AssuranceException.badRequest("UTILISATEUR_CONNECTE_INTROUVABLE",
-						"Impossible de retrouver l'utilisateur connecte."));
+						"Impossible de retrouver l'utilisateur connecté."));
 	}
 
 	private void verifierAccesSouscription(Souscription souscription) {
@@ -187,9 +187,22 @@ public class SouscriptionService {
 	}
 
 	private SouscriptionResponseDto toDto(Souscription souscription) {
+		Utilisateur utilisateur = souscription.getUtilisateur();
 		return new SouscriptionResponseDto(souscription.getId(), souscription.getSubscriptionReference(),
 				souscription.getSimulation().getQuoteReference(), souscription.getNumeroAttestation(),
-				souscription.getStatut(), souscription.getDateSouscription(), souscription.getSimulation().getPrice());
+				souscription.getStatut(), souscription.getDateSouscription(), souscription.getSimulation().getPrice(),
+				utilisateur == null ? null : utilisateur.getId(), utilisateur == null ? "-" : nomComplet(utilisateur));
+	}
+
+	private String nomComplet(Utilisateur utilisateur) {
+		String prenoms = valeurOuVide(utilisateur.getPrenoms());
+		String nom = valeurOuVide(utilisateur.getNom());
+		String nomComplet = (prenoms + " " + nom).trim();
+		return nomComplet.isEmpty() ? utilisateur.getUsername() : nomComplet;
+	}
+
+	private String valeurOuVide(String valeur) {
+		return valeur == null ? "" : valeur.trim();
 	}
 
 	private void verifierTexte(String valeur, String message) {

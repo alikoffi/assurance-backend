@@ -36,7 +36,7 @@ public class SecurityService implements UserDetailsService {
      *
      * @param username le username de l'utilisateur.
      * @return L'utilisateur.
-     * @throws UsernameNotFoundException Exception levé lorsqu'aucun utilisateur ne correspond à ce username.
+     * @throws UsernameNotFoundException exception levée lorsqu'aucun utilisateur ne correspond à ce username.
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -51,7 +51,7 @@ public class SecurityService implements UserDetailsService {
      * @param username le username de l'utilisateur.
      * @param password le password de l'utilisateur.
      * @return L'utilisateur.
-     * @throws UsernameNotFoundException Exception levé lorsqu'aucun utilisateur ne correspond à ce username.
+     * @throws UsernameNotFoundException exception levée lorsqu'aucun utilisateur ne correspond à ce username.
      */
     private Utilisateur rechercherUtilisateurParUsernameEtPassword(String username, String password) throws UsernameNotFoundException {
         Utilisateur utilisateur = utilisateurRepository.rechercherParUsername(username)
@@ -68,7 +68,7 @@ public class SecurityService implements UserDetailsService {
      * Authentifie l'utilisateur.
      *
      * @param authDto l'utilisateur.
-     * @return le Tokent JWT de l'utilisateur authentifié.
+     * @return le token JWT de l'utilisateur authentifié.
      */
     @Transactional
     public TokenDto autentifier(AuthDto authDto) {

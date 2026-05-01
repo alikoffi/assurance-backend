@@ -30,13 +30,13 @@ public class ExceptionHandlers extends ResponseEntityExceptionHandler {
 
 	public static final int CODE_HTTP_OPTIMISTICLOCK = 550;
 	/**
-	 * Encodage par défaut des messages json
+	 * Encodage par défaut des messages JSON.
 	 */
 	public static final Charset ENCODAGE_MESSAGE = StandardCharsets.UTF_8;
 	public static final Logger log = LoggerFactory.getLogger(ExceptionHandlers.class);
 
 	/**
-	 * Permet de spécifier que la réponse http renvoie du JSON.
+	 * Permet de spécifier que la réponse HTTP renvoie du JSON.
 	 *
 	 * @param erreur   l'erreur à renvoyer.
 	 * @param response la réponse HTTP.
@@ -74,7 +74,7 @@ public class ExceptionHandlers extends ResponseEntityExceptionHandler {
 	}
 
 	/**
-	 * Permet de gérer les exceptions liés à un échec d'authentification avec Spring Security.
+	 * Permet de gérer les exceptions liées à un échec d'authentification avec Spring Security.
 	 * C'est l'exception renvoyée lorsqu'une erreur est renvoyée liée à
 	 * l'annotation @Secured.
 	 *
@@ -85,7 +85,7 @@ public class ExceptionHandlers extends ResponseEntityExceptionHandler {
 	public void handleAuthenticationCredentialsNotFoundException(AuthenticationCredentialsNotFoundException ex, HttpServletResponse response) {
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-		ApplicationErreur erreur = new ApplicationErreur(ACCES_REFUSE, "Nom d'utilisateur ou mode passe erroné");
+		ApplicationErreur erreur = new ApplicationErreur(ACCES_REFUSE, "Nom d'utilisateur ou mot de passe erroné");
 		handleUnauthorizedError(ex, erreur, response);
 	}
 

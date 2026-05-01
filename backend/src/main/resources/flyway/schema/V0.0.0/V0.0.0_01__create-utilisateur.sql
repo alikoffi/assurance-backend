@@ -7,12 +7,13 @@ CREATE TABLE utilisateur
     prenoms VARCHAR(100) NOT NULL,
     role VARCHAR(100) NOT NULL,
     statut VARCHAR(100) NOT NULL DEFAULT 'ACTIF',
+    must_change_password BOOLEAN NOT NULL DEFAULT FALSE,
     create_at      TIMESTAMP,
     create_by     VARCHAR(255),
     update_at  TIMESTAMP,
     update_by VARCHAR(255),
     version INT8 NOT NULL DEFAULT 0
 );
-CREATE SEQUENCE utilisateur_id_SEQ INCREMENT BY 50 START 1;
+CREATE SEQUENCE utilisateur_id_seq INCREMENT BY 50 START 1;
 ALTER TABLE utilisateur
     ALTER COLUMN id SET DEFAULT nextval('utilisateur_id_seq');

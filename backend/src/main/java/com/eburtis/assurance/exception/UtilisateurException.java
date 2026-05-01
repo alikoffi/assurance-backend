@@ -21,14 +21,14 @@ public class UtilisateurException extends AbstractApplicationException {
 	 * Exception levée si aucun utilisateur n'est trouvé.
 	 */
 	public static UtilisateurException motDePasseIncorrect() {
-		return new UtilisateurException(CodeErreurTechnique.MOT_DE_PASSE_INCORRECT, "Le mot de passe saisi est incorrect");
+		return new UtilisateurException(CodeErreurTechnique.MOT_DE_PASSE_INCORRECT, "Le mot de passe saisi est incorrect.");
 	}
 
 	/**
 	 * Exception levée si aucun utilisateur n'est trouvé.
 	 */
 	public static UtilisateurException utilisateurInactif() {
-		return new UtilisateurException(CodeErreurTechnique.UTILISATEUR_INNACTIF, "Cet utilisateur est inactif. Contactez votre administrateur");
+		return new UtilisateurException(CodeErreurTechnique.UTILISATEUR_INNACTIF, "Cet utilisateur est inactif. Contactez votre administrateur.");
 	}
 
 	/**
@@ -42,6 +42,6 @@ public class UtilisateurException extends AbstractApplicationException {
 	 * Exception levée lorsque le token a expiré.
 	 */
 	public static UtilisateurException sessionExpiree() {
-		return new UtilisateurException(CodeErreurTechnique.ACCES_REFUSE, "Desolé votre token n'est plus valide");
+		return new UtilisateurException(CodeErreurTechnique.ACCES_REFUSE, "Désolé, votre token n'est plus valide.");
 	}
 }
