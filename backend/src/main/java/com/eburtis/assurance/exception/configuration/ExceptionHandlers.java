@@ -18,10 +18,6 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import static com.eburtis.assurance.exception.configuration.CodeErreurTechnique.ACCES_REFUSE;
-import static com.eburtis.assurance.exception.configuration.CodeErreurTechnique.AUCUN_RESULTAT;
-import static com.eburtis.assurance.exception.configuration.CodeErreurTechnique.ERREUR_INCONNUE;
-
 /**
  * Gestion des exceptions avec spring MVC.
  */
@@ -66,11 +62,11 @@ public class ExceptionHandlers extends ResponseEntityExceptionHandler {
 	public void handleNoResultException(NoResultException ex, HttpServletResponse response) {
 		response.setStatus(HttpStatus.NOT_FOUND.value());
 
-		ApplicationErreur msg = new ApplicationErreur(AUCUN_RESULTAT, "Aucun résultat trouvé");
+		ErreurApi erreur = new ErreurApi("AUCUN_RESULTAT", "Aucun résultat trouvé.", java.util.List.of());
 
-		log.warn(msg.getMessageAvecCode());
+		log.warn("{} - {}", erreur.getCode(), erreur.getMessage());
 		log.warn(ex.getMessage(), ex);
-		setReponseJson(msg, response);
+		setReponseJson(erreur, response);
 	}
 
 	/**
@@ -85,38 +81,14 @@ public class ExceptionHandlers extends ResponseEntityExceptionHandler {
 	public void handleAuthenticationCredentialsNotFoundException(AuthenticationCredentialsNotFoundException ex, HttpServletResponse response) {
 		response.setStatus(HttpStatus.UNAUTHORIZED.value());
 
-		ApplicationErreur erreur = new ApplicationErreur(ACCES_REFUSE, "Nom d'utilisateur ou mot de passe erroné");
+		ErreurApi erreur = new ErreurApi("ACCES_REFUSE", "Nom d'utilisateur ou mot de passe erroné.", java.util.List.of());
 		handleUnauthorizedError(ex, erreur, response);
 	}
 
-	private void handleUnauthorizedError(Exception ex, ApplicationErreur erreur, HttpServletResponse response) {
-		log.warn(erreur.getMessageAvecCode());
+	private void handleUnauthorizedError(Exception ex, ErreurApi erreur, HttpServletResponse response) {
+		log.warn("{} - {}", erreur.getCode(), erreur.getMessage());
 		log.debug(ex.getMessage(), ex);
 		setReponseJson(erreur, response);
-	}
-
-	/**
-	 * Permet de gérer les exceptions lancées lorsqu'une entité cherchée n'existe pas en base.
-	 *
-	 * @param ex       l'exception pour l'entité qui n'existe pas en base.
-	 * @param response la réponse HTTP.
-	 */
-	@ExceptionHandler(EntiteNonConnueException.class)
-	public void handleEntiteNonConnueException(EntiteNonConnueException ex, HttpServletResponse response) {
-		response.setStatus(HttpStatus.NOT_FOUND.value());
-
-		log.warn(ex.getMessageAvecCode());
-		log.warn(ex.getMessage(), ex);
-		setReponseJson(ex.getApplicationErreur(), response);
-	}
-
-	@ExceptionHandler(AbstractApplicationException.class)
-	public void handleAbstractApplicationException(AbstractApplicationException ex, HttpServletResponse response) {
-		response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-
-		log.error(ex.getMessageAvecCode());
-		log.debug(ex.getMessage(), ex);
-		setReponseJson(ex.getApplicationErreur(), response);
 	}
 
 	@ExceptionHandler(AssuranceException.class)
@@ -138,8 +110,9 @@ public class ExceptionHandlers extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(RuntimeException.class)
 	public void handlexceptionInconnue(RuntimeException ex, HttpServletResponse response) {
 		response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-		ApplicationErreur erreur = new ApplicationErreur(ERREUR_INCONNUE, "Une erreur inattendue s'est produite. Veuillez contacter votre administrateur.");
-		log.error(erreur.getMessageAvecCode(), ex);
+		ErreurApi erreur = new ErreurApi("ERREUR_INCONNUE",
+				"Une erreur inattendue s'est produite. Veuillez contacter votre administrateur.", java.util.List.of());
+		log.error("{} - {}", erreur.getCode(), erreur.getMessage(), ex);
 		setReponseJson(erreur, response);
 	}
 }

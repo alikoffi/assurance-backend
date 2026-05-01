@@ -72,7 +72,7 @@ class UtilisateurServiceTest {
 		UtilisateurResponseDto utilisateur = utilisateurService.creer(request("amazone.change", "Awa", "Kouame",
 				Role.AMAZONE, StatutUtilisateur.ACTIF, "password"));
 
-		TokenDto tokenAvantChangement = securityService.autentifier(new AuthDto("amazone.change", "password"));
+		TokenDto tokenAvantChangement = securityService.authentifier(new AuthDto("amazone.change", "password"));
 		assertTrue(tokenAvantChangement.isMustChangePassword());
 
 		connecter("amazone.change");
@@ -81,8 +81,8 @@ class UtilisateurServiceTest {
 
 		assertEquals(utilisateur.getId(), utilisateurModifie.getId());
 		assertFalse(utilisateurModifie.isMustChangePassword());
-		assertFalse(securityService.autentifier(new AuthDto("amazone.change", "newPassword")).isMustChangePassword());
-		assertThrows(RuntimeException.class, () -> securityService.autentifier(new AuthDto("amazone.change", "password")));
+		assertFalse(securityService.authentifier(new AuthDto("amazone.change", "newPassword")).isMustChangePassword());
+		assertThrows(RuntimeException.class, () -> securityService.authentifier(new AuthDto("amazone.change", "password")));
 	}
 
 	@Test

@@ -5,9 +5,6 @@ buildscript {
 		postgresqlVersion = '42.6.1'
 		flywaydbVersion = '9.22.3'
 		jjwtVersion = '0.11.5'
-		openApiVersion = '2.2.20'
-		springSecurityVersion = '6.2.2'
-		springVersion = '6.1.4'
 		generatedSourcesDir = file("src/main/generated")
 		sonarVersion = '5.0.0.4638'
 	}
@@ -22,7 +19,6 @@ buildscript {
 
 plugins {
 	id 'java'
-	id 'war'
 	id 'jacoco'
 	id 'org.sonarqube' version "$sonarVersion"
 	id 'org.springframework.boot' version '3.2.3'
@@ -58,8 +54,6 @@ dependencies {
 	implementation "org.flywaydb:flyway-core:$flywaydbVersion"
 
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
-	implementation 'org.apache.commons:commons-collections4:4.4'
-	implementation 'org.apache.commons:commons-lang3:3.18.0'
 	implementation 'com.itextpdf:itext7-core:7.2.5'
 
 	implementation "io.jsonwebtoken:jjwt-api:$jjwtVersion"
@@ -72,7 +66,7 @@ dependencies {
 
 	developmentOnly "org.springframework.boot:spring-boot-devtools:$springBootVersion"
 
-	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	implementation 'org.springframework.boot:spring-boot-starter-tomcat'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
@@ -106,7 +100,7 @@ task removeGeneratedMetamodel {
 			try {
 				generatedDir.deleteDir()
 			} catch (Exception e) {
-				// Ignorer les erreurs de suppression si le fichier est verrouillé
+				// Ignorer les erreurs de suppression si le fichier est verrouillé.
 				logger.warn("Impossible de supprimer ${generatedDir}: ${e.message}")
 			}
 		}
@@ -137,7 +131,7 @@ clean.doLast {
 		try {
 			generatedDir.deleteDir()
 		} catch (Exception e) {
-			// Ignorer les erreurs de suppression si le fichier est verrouillé
+			// Ignorer les erreurs de suppression si le fichier est verrouillé.
 			logger.warn("Impossible de supprimer ${generatedDir}: ${e.message}")
 		}
 	}
@@ -149,10 +143,18 @@ tasks.named('test') {
 
 task updateAppProperties(dependsOn: processResources) {
 	doLast {
-		def cmd = "git rev-parse HEAD"
-		def proc = cmd.execute()
+		def gitSha1 = System.getenv('APP_GIT_SHA1') ?: 'local'
+		try {
+			def proc = ['git', 'rev-parse', 'HEAD'].execute()
+			proc.waitFor()
+			if (proc.exitValue() == 0 && proc.text.trim()) {
+				gitSha1 = proc.text.trim()
+			}
+		} catch (Exception e) {
+			logger.info("SHA Git indisponible, utilisation de la valeur ${gitSha1}.")
+		}
 		ant.replace(file: "build/resources/main/application.properties", token: "[app.version]", value: version)
-		ant.replace(file: "build/resources/main/application.properties", token: "[app.git.sha1]", value: proc.text.trim())
+		ant.replace(file: "build/resources/main/application.properties", token: "[app.git.sha1]", value: gitSha1)
 	}
 }
 classes.dependsOn updateAppProperties
@@ -177,6 +179,6 @@ sonar {
 	}
 }
 
-bootWar {
-	archiveFileName = 'assurance-backend.war'
+bootJar {
+	archiveFileName = 'assurance-backend.jar'
 }

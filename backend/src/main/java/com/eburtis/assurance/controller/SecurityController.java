@@ -29,7 +29,7 @@ public class SecurityController {
 	@PostMapping("/auth")
 	@Logged
 	public TokenDto authentification(@RequestBody AuthDto authDto) {
-		return securityService.autentifier(authDto);
+		return securityService.authentifier(authDto);
 	}
 
 }

@@ -1,6 +1,5 @@
 package com.eburtis.assurance.configuration.openapi;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +27,7 @@ public class OpenApi30Config {
 	@Bean
 	public OpenAPI customOpenAPI() {
 		final String securitySchemeName = "bearerAuth";
-		final String apiTitle = String.format("%s API", StringUtils.capitalize(moduleName));
+		final String apiTitle = String.format("%s API", capitalize(moduleName));
 		return new OpenAPI()
 				// On dit à OpenAPI que toutes l'api est protégée
 				.addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
@@ -43,5 +42,12 @@ public class OpenApi30Config {
 								)
 				)
 				.info(new Info().title(apiTitle).version(apiVersion));
+	}
+
+	private String capitalize(String value) {
+		if (value == null || value.isBlank()) {
+			return "";
+		}
+		return value.substring(0, 1).toUpperCase() + value.substring(1).toLowerCase();
 	}
 }

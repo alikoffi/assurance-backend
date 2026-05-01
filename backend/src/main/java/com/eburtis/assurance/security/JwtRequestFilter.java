@@ -15,7 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static com.eburtis.assurance.exception.UtilisateurException.sessionExpiree;
+import com.eburtis.assurance.exception.AssuranceException;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -56,7 +56,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
             else {
-                  throw sessionExpiree();
+                  throw AssuranceException.forbidden("ACCES_REFUSE", "Désolé, votre token n'est plus valide.");
             }
         }
         filterChain.doFilter(request, response);

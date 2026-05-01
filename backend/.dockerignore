@@ -1,0 +1,8 @@
+.gradle
+build
+src/main/generated
+*.iml
+.idea
+.vscode
+out
+bin

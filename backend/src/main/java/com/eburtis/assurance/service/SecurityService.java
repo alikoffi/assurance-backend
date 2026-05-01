@@ -1,6 +1,7 @@
 package com.eburtis.assurance.service;
 
 import com.eburtis.assurance.domain.Utilisateur;
+import com.eburtis.assurance.exception.AssuranceException;
 import com.eburtis.assurance.repository.UtilisateurRepository;
 import com.eburtis.assurance.security.JwtTokenUtils;
 import com.eburtis.assurance.enums.StatutUtilisateur;
@@ -15,10 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
-
-import static com.eburtis.assurance.exception.UtilisateurException.motDePasseIncorrect;
-import static com.eburtis.assurance.exception.UtilisateurException.utiilisateurInconnu;
-import static com.eburtis.assurance.exception.UtilisateurException.utilisateurInactif;
 
 @Service
 public class SecurityService implements UserDetailsService {
@@ -42,7 +39,8 @@ public class SecurityService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return utilisateurRepository.rechercherParUsername(username.trim())
                 .map(Utilisateur::buildUser)
-                .orElseThrow(() -> utiilisateurInconnu(username));
+                .orElseThrow(() -> AssuranceException.notFound("UTILISATEUR_INCONNU",
+                        "Aucun utilisateur trouvé avec le login " + username + "."));
     }
 
     /**
@@ -55,12 +53,13 @@ public class SecurityService implements UserDetailsService {
      */
     private Utilisateur rechercherUtilisateurParUsernameEtPassword(String username, String password) throws UsernameNotFoundException {
         Utilisateur utilisateur = utilisateurRepository.rechercherParUsername(username)
-                .orElseThrow(() -> utiilisateurInconnu(username));
+                .orElseThrow(() -> AssuranceException.notFound("UTILISATEUR_INCONNU",
+                        "Aucun utilisateur trouvé avec le login " + username + "."));
         if (SecurityService.comparerPassword(password, utilisateur.getPassword())) {
                 return utilisateur;
         }
         else {
-            throw motDePasseIncorrect();
+            throw AssuranceException.badRequest("MOT_DE_PASSE_INCORRECT", "Le mot de passe saisi est incorrect.");
         }
     }
 
@@ -71,10 +70,11 @@ public class SecurityService implements UserDetailsService {
      * @return le token JWT de l'utilisateur authentifié.
      */
     @Transactional
-    public TokenDto autentifier(AuthDto authDto) {
+    public TokenDto authentifier(AuthDto authDto) {
         Utilisateur utilisateur = rechercherUtilisateurParUsernameEtPassword(authDto.getUsername(), authDto.getPassword());
         if (utilisateur.getStatut().equals(StatutUtilisateur.INACTIF)) {
-            throw utilisateurInactif();
+            throw AssuranceException.forbidden("UTILISATEUR_INACTIF",
+                    "Cet utilisateur est inactif. Contactez votre administrateur.");
         }
 
         SecurityContextHolder.clearContext();
