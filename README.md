@@ -86,13 +86,19 @@ http://localhost:8075/swagger-ui.html
 Depuis la racine du projet :
 
 ```bash
+# Première fois ou après modification du code
 docker compose up --build
+
+# Les fois suivantes
+docker compose up
 ```
 
 Cette commande lance :
 
-- PostgreSQL sur le port `5432` ;
+- PostgreSQL sur le port `5433` (le port local `5432` est réservé au PostgreSQL installé sur la machine) ;
 - le backend Spring Boot sur le port `8075`.
+
+Pour se connecter à la base depuis DBeaver en mode Docker, utiliser le port `5433` et non `5432`.
 
 L'API reste disponible sur :
 
@@ -270,11 +276,11 @@ Les tests couvrent notamment :
 Depuis le dossier `backend` :
 
 ```bash
-./gradlew bootWar
+./gradlew bootJar
 ```
 
 Artefact généré :
 
 ```text
-backend/build/libs/assurance-backend.war
+backend/build/libs/assurance-backend.jar
 ```
